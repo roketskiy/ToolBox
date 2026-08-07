@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media;
 using Button = System.Windows.Controls.Button;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MessageBox = System.Windows.MessageBox;
@@ -243,11 +244,39 @@ public partial class MainWindow : Window
     void ToggleMaximize() =>
         WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
 
+    // 窗口整体圆角：用窗口区域裁剪（Win10/11 均生效）
+    [DllImport("gdi32.dll")]
+    static extern IntPtr CreateRoundRectRgn(int left, int top, int right, int bottom, int widthEllipse, int heightEllipse);
+
+    [DllImport("user32.dll")]
+    static extern int SetWindowRgn(IntPtr hWnd, IntPtr hRgn, bool bRedraw);
+
+    [DllImport("user32.dll")]
+    static extern bool GetWindowRect(IntPtr hWnd, out RECT rect);
+
+    void ApplyRoundedRegion()
+    {
+        var hwnd = new WindowInteropHelper(this).Handle;
+        if (hwnd == IntPtr.Zero) return;
+        if (WindowState == WindowState.Maximized)
+        {
+            SetWindowRgn(hwnd, IntPtr.Zero, true);
+            return;
+        }
+        var dpi = VisualTreeHelper.GetDpi(this);
+        int radius = (int)Math.Round(10 * dpi.DpiScaleX);
+        GetWindowRect(hwnd, out var r);
+        int w = r.Right - r.Left, h = r.Bottom - r.Top;
+        var region = CreateRoundRectRgn(0, 0, w + 1, h + 1, radius * 2, radius * 2);
+        SetWindowRgn(hwnd, region, true); // 设置后区域归系统所有，勿删除
+    }
+
     // 最大化时不超过工作区（不遮任务栏）
     protected override void OnSourceInitialized(EventArgs e)
     {
         base.OnSourceInitialized(e);
         HwndSource.FromHwnd(new WindowInteropHelper(this).Handle)?.AddHook(WndProc);
+        ApplyRoundedRegion();
     }
 
     IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -268,6 +297,9 @@ public partial class MainWindow : Window
 
     [StructLayout(LayoutKind.Sequential)]
     struct POINT { public int X; public int Y; }
+
+    [StructLayout(LayoutKind.Sequential)]
+    struct RECT { public int Left, Top, Right, Bottom; }
 
     [StructLayout(LayoutKind.Sequential)]
     struct MINMAXINFO
@@ -300,3 +332,7 @@ sealed class Win32Window : System.Windows.Forms.IWin32Window
     public Win32Window(Window w) => _hwnd = new WindowInteropHelper(w).Handle;
     public nint Handle => _hwnd;
 }
+
+
+
+
