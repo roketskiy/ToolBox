@@ -8,9 +8,11 @@
         TextElement.Foreground="{StaticResource TextPrimary}"
         PreviewKeyDown="Window_PreviewKeyDown">
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="0" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0" UseAeroCaptionButtons="False"/>
+        <WindowChrome CaptionHeight="0" ResizeBorderThickness="6" GlassFrameThickness="1" CornerRadius="0" UseAeroCaptionButtons="False"/>
     </WindowChrome.WindowChrome>
 
+    <Border Background="{StaticResource PageBg}" CornerRadius="10"
+        BorderBrush="#1D1D1F" BorderThickness="1">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="36"/>
@@ -154,6 +156,9 @@
             </Button.Template>
         </Button>
     </Grid>
+</Border>
 </Window>
+
+
 
 
