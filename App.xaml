@@ -46,31 +46,22 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        <Style x:Key="CardButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="{StaticResource CardBg}"/>
+        <!-- 卡片透明覆盖层：整卡点击启动，不包裹内容，避免嵌套按钮冒泡 -->
+        <Style x:Key="CardOverlayButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Bd" CornerRadius="8" Background="{TemplateBinding Background}"
-                                BorderBrush="{StaticResource BorderColor}" BorderThickness="1">
-                            <Border.Effect>
-                                <DropShadowEffect BlurRadius="6" ShadowDepth="1" Opacity="0.10" Color="Black"/>
-                            </Border.Effect>
+                        <Border Background="{TemplateBinding Background}">
                             <ContentPresenter/>
                         </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource Accent}"/>
-                            </Trigger>
-                            <Trigger Property="IsKeyboardFocused" Value="True">
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource Accent}"/>
-                                <Setter TargetName="Bd" Property="BorderThickness" Value="2"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
     </Application.Resources>
 </Application>
+
 

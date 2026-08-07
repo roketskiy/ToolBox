@@ -75,55 +75,73 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button x:Name="CardButton" Width="240" Height="104" Margin="0,0,12,12"
-                                Tag="{Binding}" ToolTip="单击启动" Click="Card_Click"
-                                Style="{StaticResource CardButtonStyle}">
-                            <Grid Margin="12,0,12,0" VerticalAlignment="Center">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="48"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Image Grid.Column="0" Width="48" Height="48" Source="{Binding Icon}" SnapsToDevicePixels="True"/>
-                                <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                                    <TextBlock Text="{Binding Name}" FontSize="13" FontWeight="SemiBold"
-                                               TextTrimming="CharacterEllipsis" MaxHeight="18" Margin="0,0,22,0"/>
-                                    <TextBlock Text="{Binding Description}" FontSize="12"
-                                               Foreground="{StaticResource TextSecondary}"
-                                               TextWrapping="Wrap" TextTrimming="CharacterEllipsis"
-                                               LineHeight="17" MaxHeight="34" Margin="0,4,0,0"/>
-                                </StackPanel>
-                                <Button x:Name="MoreButton" Grid.Column="1" Width="22" Height="22"
-                                        HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,4,0,0"
-                                        Content="&#x22EF;" FontSize="16" Foreground="{StaticResource TextSecondary}"
-                                        Background="Transparent" BorderThickness="0" ToolTip="更多操作"
-                                        Tag="{Binding}" Click="More_Click" Visibility="Collapsed">
-                                    <Button.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem Header="编辑" Tag="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Click="Edit_Click"/>
-                                            <MenuItem Header="打开程序所在目录" Tag="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Click="OpenDir_Click"/>
-                                            <MenuItem Header="从 ToolBox 移除" Tag="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Click="Remove_Click"/>
-                                        </ContextMenu>
-                                    </Button.ContextMenu>
-                                    <Button.Template>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border x:Name="MoreBg" Background="Transparent" CornerRadius="4">
-                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="MoreBg" Property="Background" Value="#E8E8ED"/>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Button.Template>
-                                </Button>
-                            </Grid>
-                        </Button>
+                        <Grid Width="240" Height="104" Margin="0,0,12,12">
+                            <!-- 内容层 -->
+                            <Border x:Name="CardBorder" CornerRadius="8" Background="{StaticResource CardBg}"
+                                    BorderBrush="{StaticResource BorderColor}" BorderThickness="1">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="6" ShadowDepth="1" Opacity="0.10" Color="Black"/>
+                                </Border.Effect>
+                                <Grid Margin="12,0,12,0" VerticalAlignment="Center">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="48"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Image Grid.Column="0" Width="48" Height="48" Source="{Binding Icon}" SnapsToDevicePixels="True"/>
+                                    <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                        <TextBlock Text="{Binding Name}" FontSize="13" FontWeight="SemiBold"
+                                                   TextTrimming="CharacterEllipsis" MaxHeight="18" Margin="0,0,22,0"/>
+                                        <TextBlock Text="{Binding Description}" FontSize="12"
+                                                   Foreground="{StaticResource TextSecondary}"
+                                                   TextWrapping="Wrap" TextTrimming="CharacterEllipsis"
+                                                   LineHeight="17" MaxHeight="34" Margin="0,4,0,0"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                            <!-- 透明启动覆盖层 -->
+                            <Button x:Name="CardButton" Style="{StaticResource CardOverlayButtonStyle}"
+                                    Tag="{Binding}" ToolTip="单击启动" Click="Card_Click"/>
+                            <!-- 更多按钮：与启动层是兄弟，点击不会触发启动 -->
+                            <Button x:Name="MoreButton" Width="22" Height="22"
+                                    HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,16,16,0"
+                                    Content="&#x22EF;" FontSize="16" Foreground="{StaticResource TextSecondary}"
+                                    Background="Transparent" BorderThickness="0" ToolTip="更多操作"
+                                    Tag="{Binding}" Click="More_Click" Visibility="Collapsed">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="MoreBg" Background="Transparent" CornerRadius="4">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="MoreBg" Property="Background" Value="#E8E8ED"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                                <Button.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="编辑" Tag="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Click="Edit_Click"/>
+                                        <MenuItem Header="打开程序所在目录" Tag="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Click="OpenDir_Click"/>
+                                        <MenuItem Header="从 ToolBox 移除" Tag="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Click="Remove_Click"/>
+                                    </ContextMenu>
+                                </Button.ContextMenu>
+                            </Button>
+                        </Grid>
                         <DataTemplate.Triggers>
                             <DataTrigger Binding="{Binding IsMouseOver, ElementName=CardButton}" Value="True">
                                 <Setter TargetName="MoreButton" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="CardBorder" Property="BorderBrush" Value="{StaticResource Accent}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding IsKeyboardFocusWithin, ElementName=CardButton}" Value="True">
+                                <Setter TargetName="MoreButton" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="CardBorder" Property="BorderBrush" Value="{StaticResource Accent}"/>
+                                <Setter TargetName="CardBorder" Property="BorderThickness" Value="2"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsMouseOver, ElementName=MoreButton}" Value="True">
+                                <Setter TargetName="MoreButton" Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsKeyboardFocusWithin, ElementName=MoreButton}" Value="True">
                                 <Setter TargetName="MoreButton" Property="Visibility" Value="Visible"/>
                             </DataTrigger>
                         </DataTemplate.Triggers>
@@ -165,6 +183,8 @@
     </Grid>
 </Border>
 </Window>
+
+
 
 
 
