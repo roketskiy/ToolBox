@@ -213,19 +213,25 @@ public partial class MainWindow : Window
         b.ContextMenu.IsOpen = true;
     }
 
+    // 从菜单项回溯到触发菜单的卡片记录（不依赖 XAML Tag 绑定）
+    static ToolRecord? MenuRecord(object sender) =>
+        (sender as MenuItem)?.Parent is ContextMenu cm && cm.PlacementTarget is Button b
+            ? b.Tag as ToolRecord
+            : null;
+
     void Edit_Click(object sender, RoutedEventArgs e)
     {
-        if ((sender as FrameworkElement)?.Tag is ToolRecord r) EditRecord(r);
+        if (MenuRecord(sender) is { } r) EditRecord(r);
     }
 
     void OpenDir_Click(object sender, RoutedEventArgs e)
     {
-        if ((sender as FrameworkElement)?.Tag is ToolRecord r) OpenContainingDir(r);
+        if (MenuRecord(sender) is { } r) OpenContainingDir(r);
     }
 
     void Remove_Click(object sender, RoutedEventArgs e)
     {
-        if ((sender as FrameworkElement)?.Tag is ToolRecord r) RemoveRecord(r);
+        if (MenuRecord(sender) is { } r) RemoveRecord(r);
     }
 
     // ---------- 标题栏 ----------
@@ -341,6 +347,10 @@ sealed class Win32Window : System.Windows.Forms.IWin32Window
     public Win32Window(Window w) => _hwnd = new WindowInteropHelper(w).Handle;
     public nint Handle => _hwnd;
 }
+
+
+
+
 
 
 

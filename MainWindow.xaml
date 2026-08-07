@@ -97,6 +97,13 @@
                                         Content="&#x22EF;" FontSize="16" Foreground="{StaticResource TextSecondary}"
                                         Background="Transparent" BorderThickness="0" ToolTip="更多操作"
                                         Tag="{Binding}" Click="More_Click" Visibility="Collapsed">
+                                    <Button.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="编辑" Tag="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Click="Edit_Click"/>
+                                            <MenuItem Header="打开程序所在目录" Tag="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Click="OpenDir_Click"/>
+                                            <MenuItem Header="从 ToolBox 移除" Tag="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Click="Remove_Click"/>
+                                        </ContextMenu>
+                                    </Button.ContextMenu>
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
                                             <Border x:Name="MoreBg" Background="Transparent" CornerRadius="4">
@@ -158,6 +165,7 @@
     </Grid>
 </Border>
 </Window>
+
 
 
 
