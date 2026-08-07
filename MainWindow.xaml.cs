@@ -27,6 +27,8 @@ public partial class MainWindow : Window
             MessageBox.Show(this, warning + "\n\n数据目录：" + _dataDir, "数据文件提示",
                 MessageBoxButton.OK, MessageBoxImage.Warning);
         RefreshList();
+        SizeChanged += (_, _) => ApplyRoundedRegion();
+        StateChanged += (_, _) => { ApplyRoundedRegion(); UpdateMaxIcon(); };
     }
 
     // ---------- 列表与搜索 ----------
@@ -238,11 +240,18 @@ public partial class MainWindow : Window
         if (e.LeftButton == MouseButtonState.Pressed) DragMove();
     }
 
-    void Close_Click(object sender, MouseButtonEventArgs e) => Close();
-    void Minimize_Click(object sender, MouseButtonEventArgs e) => WindowState = WindowState.Minimized;
-    void Maximize_Click(object sender, MouseButtonEventArgs e) => ToggleMaximize();
+    void Close_Click(object sender, RoutedEventArgs e) => Close();
+    void Minimize_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
+    void Maximize_Click(object sender, RoutedEventArgs e) => ToggleMaximize();
     void ToggleMaximize() =>
         WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+
+    void UpdateMaxIcon()
+    {
+        bool max = WindowState == WindowState.Maximized;
+        MaxIcon.Text = max ? "\uE923" : "\uE922"; // Restore / Maximize
+        MaxButton.ToolTip = max ? "还原" : "最大化";
+    }
 
     // 窗口整体圆角：用窗口区域裁剪（Win10/11 均生效）
     [DllImport("gdi32.dll")]
@@ -332,6 +341,7 @@ sealed class Win32Window : System.Windows.Forms.IWin32Window
     public Win32Window(Window w) => _hwnd = new WindowInteropHelper(w).Handle;
     public nint Handle => _hwnd;
 }
+
 
 
 

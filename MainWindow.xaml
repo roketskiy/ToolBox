@@ -18,14 +18,25 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- 标题栏 -->
+        <!-- 标题栏（Windows 风格） -->
         <Border Grid.Row="0" Background="{StaticResource PageBg}" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,0,0">
-                <Ellipse Width="12" Height="12" Fill="#FF5F57" ToolTip="关闭 (Alt+F4)" MouseLeftButtonDown="Close_Click"/>
-                <Ellipse Width="12" Height="12" Fill="#FEBC2E" Margin="8,0,0,0" ToolTip="最小化" MouseLeftButtonDown="Minimize_Click"/>
-                <Ellipse Width="12" Height="12" Fill="#28C840" Margin="8,0,0,0" ToolTip="最大化/还原" MouseLeftButtonDown="Maximize_Click"/>
-                <TextBlock Text="ToolBox" Margin="14,0,0,0" FontSize="13" Foreground="{StaticResource TextSecondary}" VerticalAlignment="Center"/>
-            </StackPanel>
+            <Grid>
+                <TextBlock Text="ToolBox" Margin="16,0,0,0" FontSize="13" Foreground="{StaticResource TextSecondary}" VerticalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Style="{StaticResource TitleBarButtonStyle}" ToolTip="最小化" Click="Minimize_Click"
+                            AutomationProperties.Name="最小化">
+                        <TextBlock Text="&#xE921;" FontFamily="Segoe MDL2 Assets" FontSize="10"/>
+                    </Button>
+                    <Button x:Name="MaxButton" Style="{StaticResource TitleBarButtonStyle}" ToolTip="最大化" Click="Maximize_Click"
+                            AutomationProperties.Name="最大化">
+                        <TextBlock x:Name="MaxIcon" Text="&#xE922;" FontFamily="Segoe MDL2 Assets" FontSize="10"/>
+                    </Button>
+                    <Button Style="{StaticResource TitleBarCloseButtonStyle}" ToolTip="关闭 (Alt+F4)" Click="Close_Click"
+                            AutomationProperties.Name="关闭">
+                        <TextBlock Text="&#xE8BB;" FontFamily="Segoe MDL2 Assets" FontSize="10"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
         </Border>
 
         <!-- 搜索区 -->
@@ -144,4 +155,5 @@
         </Button>
     </Grid>
 </Window>
+
 
