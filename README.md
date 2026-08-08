@@ -8,7 +8,7 @@
 
 ToolBox 是一个面向 Windows 的轻量程序目录应用。它**只负责记录、搜索和启动**你已有的本地程序，不重新实现工具功能，也不管安装与升级。适合管理图片批量压缩、字幕提取这类体积小、用得少、时间久了容易忘记位置和用途的工具。
 
-## ✨ 功能特性
+## 功能特性
 
 - **一键添加**：选择 `.exe` 后自动补全名称（ProductName → FileDescription → 文件名）、图标和工作目录，通常只需再填一句简介即可保存
 - **卡片式界面**：图标 + 名称 + 最多两行简介，悬停显示更多操作
@@ -19,12 +19,12 @@ ToolBox 是一个面向 Windows 的轻量程序目录应用。它**只负责记�
 - **可靠存储**：数据保存到本地 JSON，写入原子替换并自动保留有效备份；数据损坏时自动从备份恢复，不覆盖原文件
 - **轻量无依赖**：运行时无任何第三方库，纯 WPF + .NET 标准能力
 
-## 📋 环境要求
+## 环境要求
 
 - Windows 10 / 11
 - [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0)（运行）；.NET 8 SDK（构建）
 
-## 🔨 构建与运行
+## 构建与运行
 
 ```powershell
 # 还原并构建
@@ -37,7 +37,7 @@ dotnet run
 dotnet publish -c Release
 ```
 
-## 🧪 测试
+## 测试
 
 项目内置一个无框架的轻量测试程序，覆盖数据往返、损坏恢复、名称补全与搜索等关键逻辑：
 
@@ -47,7 +47,7 @@ dotnet run --project tests\ToolBox.Tests
 
 输出 `ALL PASS` 即全部通过。
 
-## 💾 数据存储
+## 数据存储
 
 工具记录保存在：
 
@@ -68,7 +68,7 @@ dotnet run --project tests\ToolBox.Tests
 
 图标不写入 JSON，自动图标在运行时从 EXE 提取并缓存。
 
-## 📁 项目结构
+## 项目结构
 
 ```text
 ToolBox/
@@ -80,15 +80,15 @@ ToolBox/
 ├── IconProvider.cs                # EXE 图标提取
 ├── asset/                         # 应用图标与 Logo
 ├── tests/ToolBox.Tests/           # 轻量自动测试
-└── docs/superpowers/specs/        # 设计规格
+└── docs/superpowers/specs/        # 设计规格（仅本地保留，不入库）
 ```
 
-## 🧰 技术栈
+## 技术栈
 
 - C# / WPF（.NET 8，`net8.0-windows`）
 - JSON 持久化（`System.Text.Json`）
 - 零第三方运行时依赖
 
-## 📄 许可
+## 许可
 
 本项目暂未指定开源许可证，保留所有权利。
