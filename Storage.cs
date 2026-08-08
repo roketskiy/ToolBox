@@ -24,12 +24,18 @@ public static class Storage
         string path = DataPath(dir);
         if (!File.Exists(path)) return new List<ToolRecord>();
 
-        if (TryParse(path, out var list)) return list;
+        if (TryParse(path, out var list, out int skipped))
+        {
+            if (skipped > 0) warning = $"{skipped} 条记录的可执行文件路径无效，已跳过。";
+            return list;
+        }
 
         string bak = BakPath(dir);
-        if (File.Exists(bak) && TryParse(bak, out var backup))
+        if (File.Exists(bak) && TryParse(bak, out var backup, out skipped))
         {
-            warning = "数据文件已损坏，已从最近的有效备份恢复。原文件未被覆盖。";
+            warning = skipped > 0
+                ? $"数据文件已损坏，已从备份恢复（另有 {skipped} 条无效记录被跳过）。原文件未被覆盖。"
+                : "数据文件已损坏，已从最近的有效备份恢复。原文件未被覆盖。";
             return backup;
         }
         warning = "数据文件已损坏且没有有效备份，已从空列表开始。原文件未被覆盖。";
@@ -41,16 +47,17 @@ public static class Storage
         Directory.CreateDirectory(dir);
         string path = DataPath(dir), bak = BakPath(dir), tmp = TmpPath(dir);
         File.WriteAllText(tmp, JsonSerializer.Serialize(tools, JsonOpts));
-        if (File.Exists(path)) File.Copy(path, bak, true);   // 先备份当前有效文件
+        if (File.Exists(path) && TryParse(path, out _, out _)) File.Copy(path, bak, true); // 只备份有效文件，避免把损坏内容升级成备份
         File.Move(tmp, path, true);                          // 再原子替换
     }
 
-    static bool TryParse(string path, out List<ToolRecord> tools)
+    static bool TryParse(string path, out List<ToolRecord> tools, out int skipped)
     {
         try
         {
             var list = JsonSerializer.Deserialize<List<ToolRecord>>(File.ReadAllText(path), JsonOpts);
             tools = new List<ToolRecord>();
+            skipped = 0;
             foreach (var t in list ?? Enumerable.Empty<ToolRecord>())
             {
                 if (t == null) continue;
@@ -59,6 +66,11 @@ public static class Storage
                 t.ExecutablePath ??= "";
                 t.WorkingDirectory ??= "";
                 t.Arguments ??= "";
+                if (!IsUsablePath(t.ExecutablePath))   // 路径为空的记录会让 IsSamePath/GetDirectoryName 抛异常
+                {
+                    skipped++;
+                    continue;
+                }
                 tools.Add(t);
             }
             return true;
@@ -66,8 +78,16 @@ public static class Storage
         catch
         {
             tools = new List<ToolRecord>();
+            skipped = 0;
             return false;
         }
+    }
+
+    static bool IsUsablePath(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path)) return false;
+        try { Path.GetFullPath(path); return true; }
+        catch { return false; }
     }
 }
 

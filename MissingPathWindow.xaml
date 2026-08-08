@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="程序路径已失效" Width="440" SizeToContent="Height"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowInTaskbar="False"
-        Background="{StaticResource CardBg}" FontFamily="Segoe UI Variable, Segoe UI"
+        Background="{StaticResource CardBg}" FontFamily="Microsoft YaHei UI, Microsoft YaHei"
         TextElement.Foreground="{StaticResource TextPrimary}">
     <StackPanel Margin="20">
         <TextBlock Text="程序路径已失效" FontSize="15" FontWeight="SemiBold"/>

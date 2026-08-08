@@ -47,6 +47,25 @@ Check(warning2 != null, "损坏时提示");
 Check(reloaded.Count == 1 && reloaded[0].Name == "N", "从备份恢复");
 Check(File.ReadAllText(Storage.DataPath(dir)) == "{corrupted", "损坏原文件未被覆盖");
 
+// 损坏恢复后再保存：不把损坏文件复制成备份，正式文件被有效内容替换
+string bakPath = Path.Combine(dir, "tools.json.bak");
+string beforeBak = File.ReadAllText(bakPath);
+Storage.Save(dir, reloaded);
+Check(File.ReadAllText(bakPath) == beforeBak, "保存不会用损坏文件覆盖备份");
+Check(File.ReadAllText(Storage.DataPath(dir)) == beforeBak, "损坏文件被有效内容替换");
+
+// 无效路径记录：加载时跳过并提示，避免 IsSamePath/GetDirectoryName 崩溃
+string dir2 = Path.Combine(Path.GetTempPath(), "ToolBoxTest2_" + Guid.NewGuid().ToString("N"));
+Storage.Save(dir2, new List<ToolRecord>
+{
+    rec,
+    new ToolRecord { Name = "Bad", Description = "D", ExecutablePath = "" },
+});
+var loaded3 = Storage.Load(dir2, out var warning3);
+Check(loaded3.Count == 1 && loaded3[0].Name == "N", "无效路径记录被跳过");
+Check(warning3 != null, "跳过时提示");
+Directory.Delete(dir2, true);
+
 Directory.Delete(dir, true);
 Console.WriteLine("ALL PASS");
 

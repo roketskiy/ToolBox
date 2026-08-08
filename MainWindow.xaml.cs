@@ -170,7 +170,16 @@ public partial class MainWindow : Window
         };
         if (ofd.ShowDialog(new Win32Window(this)) != Forms.DialogResult.OK) return;
 
-        r.ExecutablePath = Path.GetFullPath(ofd.FileName);
+        string newPath = Path.GetFullPath(ofd.FileName);
+        var dup = _tools.FirstOrDefault(t => t.Id != r.Id && Core.IsSamePath(t.ExecutablePath, newPath));
+        if (dup != null)
+        {
+            MessageBox.Show(this, $"“{dup.Name}”已使用该路径，不能重复。", "重新定位失败",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        r.ExecutablePath = newPath;
         if (string.IsNullOrWhiteSpace(r.WorkingDirectory) || !Directory.Exists(r.WorkingDirectory))
             r.WorkingDirectory = Path.GetDirectoryName(r.ExecutablePath) ?? "";
         Save();
@@ -300,10 +309,12 @@ public partial class MainWindow : Window
         if (msg == WM_GETMINMAXINFO)
         {
             var mmi = (MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(MINMAXINFO))!;
+            // SystemParameters.WorkArea 是 DIP，MINMAXINFO 需要物理像素，否则高 DPI 下最大化尺寸错误
+            double scale = VisualTreeHelper.GetDpi(this).DpiScaleX;
             var wa = SystemParameters.WorkArea;
-            mmi.ptMaxPosition = new POINT { X = (int)wa.Left, Y = (int)wa.Top };
-            mmi.ptMaxSize = new POINT { X = (int)wa.Width, Y = (int)wa.Height };
-            mmi.ptMaxTrackSize = new POINT { X = (int)wa.Width, Y = (int)wa.Height };
+            mmi.ptMaxPosition = new POINT { X = (int)(wa.Left * scale), Y = (int)(wa.Top * scale) };
+            mmi.ptMaxSize = new POINT { X = (int)(wa.Width * scale), Y = (int)(wa.Height * scale) };
+            mmi.ptMaxTrackSize = new POINT { X = (int)(wa.Width * scale), Y = (int)(wa.Height * scale) };
             Marshal.StructureToPtr(mmi, lParam, true);
             handled = true;
         }

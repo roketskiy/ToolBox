@@ -12,6 +12,7 @@
     <Product>ToolBox</Product>
     <Description>带简介的本地程序目录</Description>
     <Version>0.1.0</Version>
+    <ApplicationIcon>asset\ToolBox.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>

@@ -4,7 +4,7 @@
         Title="ToolBox"
         Width="920" Height="640" MinWidth="680" MinHeight="480"
         WindowStyle="None" Background="{StaticResource PageBg}"
-        FontFamily="Segoe UI Variable, Segoe UI"
+        FontFamily="Microsoft YaHei UI, Microsoft YaHei"
         TextElement.Foreground="{StaticResource TextPrimary}"
         PreviewKeyDown="Window_PreviewKeyDown">
     <WindowChrome.WindowChrome>
